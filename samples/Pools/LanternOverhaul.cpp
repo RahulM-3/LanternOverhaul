@@ -68,8 +68,8 @@ void main()
 		// to get nearby npcs
 		const int Arr_size = 150;
 		Ped nearbyPeds[Arr_size];
-		int radius = 120000; // mod affect radius
-		int numPeds = worldGetAllPeds(nearbyPeds, Arr_size); // pool resets to 0 in town
+		int radius = 600; // mod affect radius
+		int numPeds = worldGetAllPeds(nearbyPeds, radius); // pool resets to 0 in town
 
 		// weapon hash
 		Hash lantern1 = 0x4A59E501;
@@ -100,24 +100,24 @@ void main()
 			// distance between player and npc
 			Vector3 playercoo = ENTITY::GET_ENTITY_COORDS(playerPed, true, true);
 			Vector3 npccoo = ENTITY::GET_ENTITY_COORDS(ped, true, true);
-			float distance = BUILTIN::VDIST2(playercoo.x, playercoo.y, playercoo.z, npccoo.x, npccoo.y, npccoo.z);
+			float distance = BUILTIN::VDIST(playercoo.x, playercoo.y, playercoo.z, npccoo.x, npccoo.y, npccoo.z);
 
 			// go to next ped if ped is not within radius
 			if (distance > radius)
 			{
 				continue;
 			}
-
+			
 			// debug
 			peds_in_rad++;
 			logfile << "\nPed: " << dehash(ENTITY::GET_ENTITY_MODEL(ped), pedsHashtoStr) << "\n";
 			logfile << "Gender: " << PED::IS_PED_MALE(ped) << "\n";
-			logfile << "Distance (RAGE units): " << distance << "\n";
+			logfile << "Distance: " << distance << "\n";
 			/*std::string coo = (std::to_string(npccoo.x / 1000) + " " + std::to_string(npccoo.y / 1000) + " " + std::to_string(npccoo.z / 1000));
 			DrawText(npccoo.x/1000, npccoo.y/1000, (char*)coo.c_str());*/
 
 			// 
-			int attach_point;
+			int attach_point = 0;
 			if ((PED::IS_PED_USING_ANY_SCENARIO(ped) && TASK::IS_PED_WALKING(ped)) || (PED::IS_PED_USING_ANY_SCENARIO(ped) && TASK::IS_PED_RUNNING(ped)))
 			{
 				attach_point = 1;
@@ -173,7 +173,7 @@ void main()
 
 			// debug npc behaviour
 			WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
-			if (IsKeyJustUp(0x54) || is_npcstat)
+			/*if (IsKeyJustUp(0x54) || is_npcstat)
 			{
 				if (is_npcstat)
 				{
@@ -203,17 +203,15 @@ void main()
 						npcstat(playerAimonped, stat);
 					}
 				}
-			}
-			if (is_npcstat == false)
-			{
-				logfile << "Is ped using Lantern: " << ((curweapon == lantern1) || (curweapon == lantern2)) << "\n";
-				logfile << "Is ped still: " << TASK::IS_PED_STILL(ped) << "\n";
-				logfile << "Is ped walking: " << TASK::IS_PED_WALKING(ped) << "\n";
-				logfile << "Is ped running: " << TASK::IS_PED_RUNNING(ped) << "\n";
-				logfile << "Is ped in scenario: " << PED::IS_PED_USING_ANY_SCENARIO(ped) << "\n";
-				logfile << "Is ped fully mounted: " << PED::IS_PED_FULLY_ON_MOUNT(ped, true) << "\n";
-				logfile << "Where is ped seating: " << (int)PED::GET_SEAT_PED_IS_USING(ped) << "\n";
-			}
+			}*/
+			logfile << "Is ped using Lantern: " << dehash(curweapon, weaponhashtostr) << "\n";
+			logfile << "Is ped still: " << TASK::IS_PED_STILL(ped) << "\n";
+			logfile << "Is ped walking: " << TASK::IS_PED_WALKING(ped) << "\n";
+			logfile << "Is ped running: " << TASK::IS_PED_RUNNING(ped) << "\n";
+			logfile << "Is ped in scenario: " << PED::IS_PED_USING_ANY_SCENARIO(ped) << "\n";
+			logfile << "Is ped in combat: " << PED::IS_PED_IN_MELEE_COMBAT(ped) << "\n";
+			logfile << "Is ped fully mounted: " << PED::IS_PED_FULLY_ON_MOUNT(ped, true) << "\n";
+			logfile << "Where is ped seating: " << (int)PED::GET_SEAT_PED_IS_USING(ped) << "\n";
 		}
 
 		//std::string coo = (std::to_string(playercoo.x/1000)+" "+std::to_string(playercoo.y/1000)+" "+std::to_string(playercoo.z/1000));
