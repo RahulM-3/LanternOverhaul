@@ -10,6 +10,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <set>
 
 
 // debug text ingame
@@ -32,7 +33,17 @@ std::ofstream logfile("LanternOverhaul.log"); // log file
 // variable
 bool is_npcstat = false; // single npc debug
 int is_night = 2; // 0 - DAY, 1 - PARTIALLY DARK, 2 - NIGHT
-bool lanterngiven = false; // to avoide unlimited lantern spawn when disarmed
+std::set<Hash> lanterngiven = {}; // to avoide unlimited lantern spawn when disarmed
+bool find(Hash hash, std::set<Hash> Set)
+{
+	auto val = Set.find(hash);
+	if (val != Set.end())
+	{
+		return true;
+	}
+	return false;
+}
+
 
 void main()
 {
@@ -139,10 +150,9 @@ void main()
 			}
 
 			// if npc doesn't have a lantern, give one
-			bool haslantern = WEAPON::HAS_PED_GOT_WEAPON(ped, lantern1, 0, false) || WEAPON::HAS_PED_GOT_WEAPON(ped, lantern2, 0, false);
 			logfile << "Ped's attach point: " << attach_point << "\n";
-			logfile << "Ped has lantern: " << haslantern << "\n";
-			if (haslantern == false && !lanterngiven == false)
+			bool haslantern = WEAPON::HAS_PED_GOT_WEAPON(ped, lantern1, 0, false) || WEAPON::HAS_PED_GOT_WEAPON(ped, lantern2, 0, false);
+			if (haslantern == false && find(ENTITY::GET_ENTITY_MODEL(ped), lanterngiven) == false)
 			{
 				logfile << "Giving lantern" << "\n";
 				if ((rand() % 2) == 0)
@@ -158,12 +168,16 @@ void main()
 
 				haslantern = WEAPON::HAS_PED_GOT_WEAPON(ped, lantern1, 0, false) || WEAPON::HAS_PED_GOT_WEAPON(ped, lantern2, 0, false);
 				logfile << "Ped has lantern now: " << haslantern << "\n";
+				lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
 			}
 
 			// force ped to use lantern (ped keeps lantern inside while entering a anim)
+			haslantern = WEAPON::HAS_PED_GOT_WEAPON(ped, lantern1, 0, false) || WEAPON::HAS_PED_GOT_WEAPON(ped, lantern2, 0, false);
+			logfile << "Ped has lantern: " << haslantern << "\n";
 			WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
-			if (curweapon == unarmed)
+			if (curweapon == unarmed && haslantern)
 			{
+				logfile << "setting current weapon as lantern" << "\n";
 				if (WEAPON::HAS_PED_GOT_WEAPON(ped, lantern1, 0, false))
 				{
 					WEAPON::SET_CURRENT_PED_WEAPON(ped, lantern1, true, attach_point, NULL, NULL);
@@ -214,6 +228,7 @@ void main()
 			logfile << "Is ped in scenario: " << PED::IS_PED_USING_ANY_SCENARIO(ped) << "\n";
 			logfile << "Is ped in combat: " << PED::IS_PED_IN_MELEE_COMBAT(ped) << "\n";
 			logfile << "Is ped fully mounted: " << PED::IS_PED_FULLY_ON_MOUNT(ped, true) << "\n";
+			logfile << "Is ped been lassoed: " << PED::IS_PED_LASSOED(ped) << "\n";
 			logfile << "Where is ped seating: " << (int)PED::GET_SEAT_PED_IS_USING(ped) << "\n";
 		}
 
