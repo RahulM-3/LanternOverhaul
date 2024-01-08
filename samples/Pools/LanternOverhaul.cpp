@@ -27,12 +27,15 @@ void npcstat(Ped ped, const char* stat[])
 	}
 }
 
+std::ofstream logfile("LanternOverhaul.log"); // log file
+
+// variable
+bool is_npcstat = false; // single npc debug
+int is_night = 2; // 0 - DAY, 1 - PARTIALLY DARK, 2 - NIGHT
+bool lanterngiven = false; // to avoide unlimited lantern spawn when disarmed
 
 void main()
 {
-	std::ofstream logfile("LanternOverhaul.log"); // log file
-	bool is_npcstat = false; // single npc debug
-	int is_night = 2; // 0 - DAY, 1 - PARTIALLY DARK, 2 - NIGHT
 	while (true)
 	{
 		// get ingame time (npcs use lantern from 22:00 to 5:00)
@@ -92,7 +95,7 @@ void main()
 			}
 
 			// go to next ped if current ped is not human or is playerped
-			if (!PED::IS_PED_HUMAN(ped) || ped == playerPed)
+			if (!PED::IS_PED_HUMAN(ped) || ped == playerPed || ENTITY::IS_ENTITY_DEAD(ped))
 			{
 				continue;
 			}
@@ -139,7 +142,7 @@ void main()
 			bool haslantern = WEAPON::HAS_PED_GOT_WEAPON(ped, lantern1, 0, false) || WEAPON::HAS_PED_GOT_WEAPON(ped, lantern2, 0, false);
 			logfile << "Ped's attach point: " << attach_point << "\n";
 			logfile << "Ped has lantern: " << haslantern << "\n";
-			if (!haslantern)
+			if (haslantern == false && !lanterngiven == false)
 			{
 				logfile << "Giving lantern" << "\n";
 				if ((rand() % 2) == 0)
