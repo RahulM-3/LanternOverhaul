@@ -51,6 +51,7 @@ void main()
 	{
 		// get ingame time (npcs use lantern from 22:00 to 5:00)
 		int time = CLOCK::GET_CLOCK_HOURS();
+		int sec = CLOCK::GET_CLOCK_SECONDS();
 		if (time >= 20 && time <= 4)
 		{
 			is_night = 2;
@@ -153,6 +154,64 @@ void main()
 			}
 
 			// check if ped is being unarmed or hogotied or lassoed
+			WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
+			int bone;
+			if (PED::GET_PED_LAST_DAMAGE_BONE(ped, &bone))
+			{
+				logfile << "npc got shot in: " << bone << "\n";
+				srand(sec);
+				int randdis = 0 + (std::rand() % (99 - 0 + 1));
+				if (attach_point == 0)
+				{
+					if (bone == 46065)
+					{
+						logfile << "shot on right upper arm" << "\n";
+						if (randdis < 50)
+						{
+							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+							lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
+						}
+					}
+					else if (bone == 54187)
+					{
+						logfile << "shot on right fore arm" << "\n";
+						if (randdis < 50)
+						{
+							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+							lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
+						}
+					}
+				}
+				if (attach_point == 1)
+				{
+					if (bone == 37873)
+					{
+						logfile << "shot on left upper arm" << "\n";
+						if (randdis < 50)
+						{
+							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+							lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
+						}
+					}
+					else if (bone == 53675)
+					{
+						logfile << "shot on left fore arm" << "\n";
+						if (randdis < 50)
+						{
+							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+							lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
+						}
+					}
+				}
+			}
+			if (PED::IS_PED_HOGTIED(ped) || PED::IS_PED_LASSOED(ped))
+			{
+				if (curweapon == lantern1 || curweapon == lantern2)
+				{
+					WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+				}
+				lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
+			}
 			
 			// if npc doesn't have a lantern, give one
 			logfile << "Ped's attach point: " << attach_point << "\n";
@@ -173,7 +232,6 @@ void main()
 
 				haslantern = WEAPON::HAS_PED_GOT_WEAPON(ped, lantern1, 0, false) || WEAPON::HAS_PED_GOT_WEAPON(ped, lantern2, 0, false);
 				logfile << "Ped has lantern now: " << haslantern << "\n";
-				lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
 			}
 
 			// force ped to use lantern (ped keeps lantern inside while entering a anim)
