@@ -153,7 +153,7 @@ void main()
 				attach_point = 0;
 			}
 
-			// check if ped is being unarmed or hogotied or lassoed
+			// unarmed ped when shot or hogotied or lassoed
 			WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
 			int bone;
 			if (PED::GET_PED_LAST_DAMAGE_BONE(ped, &bone))
@@ -166,18 +166,22 @@ void main()
 					if (bone == 46065)
 					{
 						logfile << "shot on right upper arm" << "\n";
-						if (randdis < 50)
+						if (randdis < 60)
 						{
 							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+							WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
+							logfile << "disarmed? :" << dehash(curweapon, weaponhashtostr) << "\n";
 							lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
 						}
 					}
 					else if (bone == 54187)
 					{
 						logfile << "shot on right fore arm" << "\n";
-						if (randdis < 50)
+						if (randdis < 90)
 						{
 							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+							WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
+							logfile << "disarmed? :" << dehash(curweapon, weaponhashtostr) << "\n";
 							lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
 						}
 					}
@@ -187,18 +191,22 @@ void main()
 					if (bone == 37873)
 					{
 						logfile << "shot on left upper arm" << "\n";
-						if (randdis < 50)
+						if (randdis < 60)
 						{
 							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+							WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
+							logfile << "disarmed? :" << dehash(curweapon, weaponhashtostr) << "\n";
 							lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
 						}
 					}
 					else if (bone == 53675)
 					{
 						logfile << "shot on left fore arm" << "\n";
-						if (randdis < 50)
+						if (randdis < 90)
 						{
 							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+							WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
+							logfile << "disarmed? :" << dehash(curweapon, weaponhashtostr) << "\n";
 							lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
 						}
 					}
@@ -209,8 +217,8 @@ void main()
 				if (curweapon == lantern1 || curweapon == lantern2)
 				{
 					WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+					lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
 				}
-				lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
 			}
 			
 			// if npc doesn't have a lantern, give one
@@ -299,7 +307,10 @@ void main()
 		//std::string coo = (std::to_string(playercoo.x/1000)+" "+std::to_string(playercoo.y/1000)+" "+std::to_string(playercoo.z/1000));
 		//DrawText(0.49, 0.48, (char*)"x");
 
-		logfile << "\nTotal peds: " << numPeds << " Peds in rad: " << peds_in_rad << "\n";
+		if (numPeds != 0)
+		{
+			logfile << "\nTotal peds: " << numPeds << " Peds in rad: " << peds_in_rad << "\n";
+		}
 		WAIT(0);
 
 	}
