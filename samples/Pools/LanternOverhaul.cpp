@@ -63,9 +63,7 @@ void main()
 		{
 			is_night = 0;
 		}
-		logfile << "Time: " << time << " is night: " << is_night << "\n";
 		
-
 		// does not execute the below codes. 
 		if (is_night == 0)
 		{
@@ -106,8 +104,13 @@ void main()
 			}
 
 			// go to next ped if current ped is not human or is playerped
-			if (!PED::IS_PED_HUMAN(ped) || ped == playerPed || ENTITY::IS_ENTITY_DEAD(ped))
+			if (!PED::IS_PED_HUMAN(ped) || ped == playerPed)
 			{
+				continue;
+			}
+			if (ENTITY::IS_ENTITY_DEAD(ped))
+			{
+				lanterngiven.erase(ENTITY::GET_ENTITY_MODEL(ped));
 				continue;
 			}
 
@@ -149,6 +152,8 @@ void main()
 				attach_point = 0;
 			}
 
+			// check if ped is being unarmed or hogotied or lassoed
+			
 			// if npc doesn't have a lantern, give one
 			logfile << "Ped's attach point: " << attach_point << "\n";
 			bool haslantern = WEAPON::HAS_PED_GOT_WEAPON(ped, lantern1, 0, false) || WEAPON::HAS_PED_GOT_WEAPON(ped, lantern2, 0, false);
@@ -229,6 +234,7 @@ void main()
 			logfile << "Is ped in combat: " << PED::IS_PED_IN_MELEE_COMBAT(ped) << "\n";
 			logfile << "Is ped fully mounted: " << PED::IS_PED_FULLY_ON_MOUNT(ped, true) << "\n";
 			logfile << "Is ped been lassoed: " << PED::IS_PED_LASSOED(ped) << "\n";
+			logfile << "Is ped been hogtied: " << PED::IS_PED_HOGTIED(ped) << "\n";
 			logfile << "Where is ped seating: " << (int)PED::GET_SEAT_PED_IS_USING(ped) << "\n";
 		}
 
