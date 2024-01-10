@@ -156,7 +156,7 @@ void main()
 			// unarmed ped when shot or hogotied or lassoed
 			WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
 			int bone;
-			if (PED::GET_PED_LAST_DAMAGE_BONE(ped, &bone))
+			if (PED::GET_PED_LAST_DAMAGE_BONE(ped, &bone) && (curweapon == lantern1 || curweapon == lantern2))
 			{
 				logfile << "npc got shot in: " << bone << "\n";
 				srand(sec);
@@ -166,7 +166,7 @@ void main()
 					if (bone == 46065)
 					{
 						logfile << "shot on right upper arm" << "\n";
-						if (randdis < 60)
+						if (randdis < 55)
 						{
 							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
 							WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
@@ -191,7 +191,7 @@ void main()
 					if (bone == 37873)
 					{
 						logfile << "shot on left upper arm" << "\n";
-						if (randdis < 60)
+						if (randdis < 55)
 						{
 							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
 							WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
