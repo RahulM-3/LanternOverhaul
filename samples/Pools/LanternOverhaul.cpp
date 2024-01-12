@@ -123,6 +123,10 @@ void main()
 			// go to next ped if ped is not within radius
 			if (distance > radius)
 			{
+				if (distance > radius + 100)
+				{
+					lanterngiven.erase(ENTITY::GET_ENTITY_MODEL(ped));
+				}
 				continue;
 			}
 			
@@ -155,8 +159,14 @@ void main()
 
 			// unarmed ped when shot or hogotied or lassoed
 			WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
+			logfile << "Lantern: " << ((curweapon == lantern1) || (curweapon == lantern2)) << "\n";
 			int bone;
-			if (PED::GET_PED_LAST_DAMAGE_BONE(ped, &bone) && (curweapon == lantern1 || curweapon == lantern2))
+			PED::GET_PED_LAST_DAMAGE_BONE(ped, &bone);
+			if (bone)
+			{
+				logfile << "npc got shot in: " << bone << "\n";
+			}
+			if (PED::GET_PED_LAST_DAMAGE_BONE(ped, &bone))
 			{
 				logfile << "npc got shot in: " << bone << "\n";
 				srand(sec);
@@ -168,7 +178,7 @@ void main()
 						logfile << "shot on right upper arm" << "\n";
 						if (randdis < 55)
 						{
-							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+							WEAPON::MAKE_PED_DROP_WEAPON(ped, false, attach_point, false, false);
 							WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
 							logfile << "disarmed? :" << dehash(curweapon, weaponhashtostr) << "\n";
 							lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
@@ -179,7 +189,7 @@ void main()
 						logfile << "shot on right fore arm" << "\n";
 						if (randdis < 90)
 						{
-							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+							WEAPON::MAKE_PED_DROP_WEAPON(ped, false, attach_point, false, false);
 							WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
 							logfile << "disarmed? :" << dehash(curweapon, weaponhashtostr) << "\n";
 							lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
@@ -193,7 +203,7 @@ void main()
 						logfile << "shot on left upper arm" << "\n";
 						if (randdis < 55)
 						{
-							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+							WEAPON::MAKE_PED_DROP_WEAPON(ped, false, attach_point, false, false);
 							WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
 							logfile << "disarmed? :" << dehash(curweapon, weaponhashtostr) << "\n";
 							lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
@@ -204,7 +214,7 @@ void main()
 						logfile << "shot on left fore arm" << "\n";
 						if (randdis < 90)
 						{
-							WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
+							WEAPON::MAKE_PED_DROP_WEAPON(ped, false, attach_point, false, false);
 							WEAPON::GET_CURRENT_PED_WEAPON(ped, &curweapon, NULL, attach_point, NULL);
 							logfile << "disarmed? :" << dehash(curweapon, weaponhashtostr) << "\n";
 							lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
@@ -214,11 +224,8 @@ void main()
 			}
 			if (PED::IS_PED_HOGTIED(ped) || PED::IS_PED_LASSOED(ped))
 			{
-				if (curweapon == lantern1 || curweapon == lantern2)
-				{
-					WEAPON::REMOVE_WEAPON_FROM_PED(ped, curweapon, true, 0xEC7FB5D5);
-					lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
-				}
+				WEAPON::MAKE_PED_DROP_WEAPON(ped, false, attach_point, false, false);
+				lanterngiven.insert(ENTITY::GET_ENTITY_MODEL(ped));
 			}
 			
 			// if npc doesn't have a lantern, give one
